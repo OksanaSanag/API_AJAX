@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+<body>
+    <form>
+        <label for="">
+            <span>Name:</span>
+            <input type="text" id="userName" placeholder="Name">
+        </label>
+        <label for="">
+                <span>Age:</span>
+            <input type="number" id="userAge" min="1" max="120" placeholder="25">
+        </label>
+        <button type="button" id="createUser">Create user</button>
+    </form>
+    
+    <div class="users"></div>
+
+    <script src="API.js"></script>
+</body>
+</html>
