@@ -18,14 +18,17 @@ body {
 .userCard, form {
     display: flex;
     flex-direction: column;
-    width: 300px;
+    width: 350px;
     background: rgb(250, 218, 240);
     margin: 30px;
     padding: 20px;
     color: blueviolet;
     border: 1px dashed blueviolet;
     border-radius: 7px;
-    font-size: 14px;    
+       
+}
+.userCard div {
+    font-size: 16px; 
 }
 form {
     background: rgb(247, 147, 233);

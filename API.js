@@ -14,8 +14,10 @@ function getUsers() {
     });
 }
 
+
+
 function deleteUser(userId) {
-    return fetch(API + '/users/' + userId, {
+    return fetch(API + '/user/' + userId, {
         method: 'DELETE'
     })
     .then(resolve => resolve.json())
@@ -34,22 +36,81 @@ function renderUsers(users) {
     users.forEach(user => {
         const div = document.createElement('div');
         div.className = 'userCard';
-        div.innerHTML = `
-            <div><b>ID:  </b>${user.id}    </div>
-            <div><b>Name:</b> ${user.name}</div> 
-            <div><b>Age: </b> ${user.age}  </div>
-            `
-        const btn = document.createElement('button');
-        btn.className = 'button';
-        btn.innerText = 'Delete';
 
-        btn.addEventListener('click', () => {
+        const divUser = document.createElement('div');
+
+        function innerHTMLinput(user) {
+            divUser.innerHTML = `
+                <div><b>Name:</b> ${user.name}</div> 
+                <div><b>Age: </b> ${user.age} </div>
+            `            
+        }
+
+        function innerHTMLinputForm(user) {
+            divUser.innerHTML = `   
+                <label for="">
+                    <span>Name:</span>
+                    <input type="text" id="name-${user.id}" value="${user.name}">
+                </label>     
+                <label for="">
+                    <span>Age:</span>
+                    <input type="text" id="age-${user.id}" value="${user.age}">
+                </label> 
+                `
+        }
+
+        innerHTMLinput(user);
+        div.append(divUser);
+
+        // btnDelete
+        const btnDelete = document.createElement('button');
+        btnDelete.innerText = 'Delete';
+
+        btnDelete.addEventListener('click', () => {
             deleteUser(user.id)
             .then(() => {
                 div.remove();
             }).catch(() => {})
         })
-        div.append(btn);
+
+        div.append(btnDelete);
+
+        //btnEdit
+        const btnEdit = document.createElement('button');
+        btnEdit.innerText = 'Edit';
+
+        btnEdit.addEventListener('click', () => {
+            if (btnEdit.innerText == 'Edit') {
+                innerHTMLinputForm(user);
+                btnEdit.innerText = 'Save';
+            } 
+             else {
+                const userEditName = document.querySelector(`#name-${user.id}`);
+                console.log(`#name-${user.id}`, userEditName);
+
+                const userEditAge = document.querySelector(`#age-${user.id}`);
+                console.log(`#age-${user.id}`, userEditAge);
+
+                const newUser = 
+                {
+                    name: userEditName.value,
+                    age:  userEditAge.value,
+                    id: user.id
+                };
+                saveUser(newUser).then(user => {
+                    innerHTMLinput(user);
+                    
+                    console.log(user.name);
+                });
+                btnEdit.innerText = 'Edit';  
+                         
+             }
+
+            console.log(user);
+            
+        })
+        
+        div.append(btnEdit);
 
         container.append(div);
     });
@@ -88,5 +149,20 @@ buttonCreate.addEventListener('click', () => {
         console.log(err)
     })
 })
+
+function saveUser(user) {
+    return fetch(API + '/users/' + user.id, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(user)
+    })
+    .then(resolve => resolve.json())
+    .then((res) => res.data)
+    .catch((err) => {
+        console.log("Can't Update users", err);
+    });
+}
 
 listUser();
