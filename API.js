@@ -17,7 +17,7 @@ function getUsers() {
 
 
 function deleteUser(userId) {
-    return fetch(API + '/user/' + userId, {
+    return fetch(API + '/users/' + userId, {
         method: 'DELETE'
     })
     .then(resolve => resolve.json())
