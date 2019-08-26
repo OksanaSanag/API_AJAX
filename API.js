@@ -1,8 +1,8 @@
 const API = 'https://test-users-api.herokuapp.com';
 
 const container = document.querySelector('.users');
-const userName = document.querySelector('#userName');
-const userAge = document.querySelector('#userAge');
+const userNameInput = document.querySelector('#userName');
+const userAgeInput = document.querySelector('#userAge');
 const buttonCreate = document.querySelector('#createUser');
 
 function getUsers() {
@@ -13,8 +13,6 @@ function getUsers() {
         console.log("Can't GET users", err);
     });
 }
-
-
 
 function deleteUser(userId) {
     return fetch(API + '/users/' + userId, {
@@ -84,7 +82,7 @@ function renderUsers(users) {
                 innerHTMLinputForm(user);
                 btnEdit.innerText = 'Save';
             } 
-             else {
+            else {
                 const userEditName = document.querySelector(`#name-${user.id}`);
                 console.log(`#name-${user.id}`, userEditName);
 
@@ -97,14 +95,19 @@ function renderUsers(users) {
                     age:  userEditAge.value,
                     id: user.id
                 };
-                saveUser(newUser).then(user => {
-                    innerHTMLinput(user);
-                    
+
+                if(!correctInput(newUser, userEditName, userEditAge)) {
+                    return;
+                }
+
+                saveUser(newUser).then(newUser => {
+                    innerHTMLinput(newUser);
+                    user = newUser
                     console.log(user.name);
                 });
-                btnEdit.innerText = 'Edit';  
-                         
-             }
+                
+                btnEdit.innerText = 'Edit';       
+            }
 
             console.log(user);
             
@@ -125,12 +128,38 @@ function listUser() {
     });
 }
 
+function correctInput(user, userNameInput, userAgeInput) {
+    if (user.name == "") {
+        userNameInput.placeholder = "Enter your name";
+        userNameInput.style.borderColor = "red";
+        return false;
+    }
+
+    if (user.age == "") {
+        userAgeInput.placeholder = "Enter your age";
+        userAgeInput.style.borderColor = "red";
+        return false;
+    } else if (user.age > 120) { 
+        userAgeInput.value = "";
+        userAgeInput.style.borderColor = "red";
+        alert("Please, enter correct age");
+        return false;
+    }
+    userNameInput.style.borderColor = "transparent";
+    userAgeInput.style.borderColor = "transparent";
+    return true;
+}
+
 buttonCreate.addEventListener('click', () => {
     const user = 
         {
-            name: userName.value,
-            age:  userAge.value
+            name: userNameInput.value,
+            age:  userAgeInput.value
         };
+ 
+    if(!correctInput(user, userNameInput, userAgeInput)) {
+        return;
+    }
 
     fetch(API + '/users/', {
         method: 'POST',
@@ -143,8 +172,8 @@ buttonCreate.addEventListener('click', () => {
     .then(({id}) => {
         user.id = id;
         listUser();
-        userName.value = ''; 
-        userAge.value = '';
+        userNameInput.value = ''; 
+        userAgeInput.value = '';
     }).catch((err) => {
         console.log(err)
     })
